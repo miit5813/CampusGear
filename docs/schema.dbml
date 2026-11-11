@@ -1,0 +1,170 @@
+Table categories {
+  id integer [pk, increment]
+  name varchar(100) [not null, unique]
+  description text
+}
+
+Table users {
+  id integer [pk, increment]
+  full_name varchar(150) [not null]
+  email varchar(255) [not null, unique]
+  password_hash varchar(255) [not null]
+  role varchar(30) [not null, note: 'user | admin']
+  user_type varchar(30) [not null, note: 'student | employee']
+  group_or_department varchar(100)
+  phone varchar(30)
+  is_blocked boolean [not null]
+  created_at timestamp [not null]
+}
+
+Table audit_log {
+  id integer [pk, increment]
+  user_id integer
+  action varchar(100) [not null]
+  entity_type varchar(50) [not null]
+  entity_id integer
+  details text
+  created_at timestamp [not null]
+}
+
+Table equipment {
+  id integer [pk, increment]
+  category_id integer [not null]
+  name varchar(150) [not null]
+  description text
+  manufacturer varchar(100)
+  is_active boolean [not null]
+  created_at timestamp [not null]
+}
+
+Table equipment_photos {
+  id integer [pk, increment]
+  equipment_id integer [not null]
+  url varchar(500) [not null]
+  is_main boolean [not null]
+  sort_order integer [not null]
+}
+
+Table equipment_units {
+  id integer [pk, increment]
+  equipment_id integer [not null]
+  inventory_number varchar(50) [not null, unique]
+  condition varchar(30) [not null, note: 'new | good | fair | poor']
+  status varchar(30) [not null, note: 'available | issued | maintenance | written_off']
+  notes text
+  created_at timestamp [not null]
+}
+
+Table rental_terms {
+  id integer [pk, increment]
+  equipment_id integer [not null, unique]
+  max_days integer [not null]
+  deposit decimal(10,2) [not null]
+  fine_per_day decimal(10,2) [not null]
+  allowed_for varchar(30) [not null, note: 'all | student | employee']
+  requirements text
+}
+
+Table waitlist_entries {
+  id integer [pk, increment]
+  user_id integer [not null]
+  equipment_id integer [not null]
+  desired_start date [not null]
+  desired_end date [not null]
+  status varchar(30) [not null, note: 'waiting | notified | fulfilled | cancelled']
+  created_at timestamp [not null]
+  notified_at timestamp
+}
+
+Table bookings {
+  id integer [pk, increment]
+  user_id integer [not null]
+  equipment_id integer [not null]
+  unit_id integer
+  start_date date [not null]
+  end_date date [not null]
+  status varchar(30) [not null, note: 'pending | approved | rejected | cancelled | issued | returned | overdue']
+  user_comment text
+  admin_comment text
+  decided_by integer
+  decided_at timestamp
+  created_at timestamp [not null]
+}
+
+Table booking_status_history {
+  id integer [pk, increment]
+  booking_id integer [not null]
+  old_status varchar(30)
+  new_status varchar(30) [not null]
+  changed_by integer
+  comment text
+  changed_at timestamp [not null]
+}
+
+Table fines {
+  id integer [pk, increment]
+  booking_id integer [not null]
+  user_id integer [not null]
+  fine_type varchar(30) [not null, note: 'overdue | damage | loss']
+  amount decimal(10,2) [not null]
+  days_overdue integer
+  status varchar(30) [not null, note: 'unpaid | paid | cancelled']
+  description text
+  created_at timestamp [not null]
+  paid_at timestamp
+}
+
+Table handovers {
+  id integer [pk, increment]
+  booking_id integer [not null, unique]
+  unit_id integer [not null]
+  issued_by integer [not null]
+  issued_at timestamp [not null]
+  condition_on_issue varchar(30) [not null, note: 'new | good | fair | poor']
+  notes text
+}
+
+Table notifications {
+  id integer [pk, increment]
+  user_id integer [not null]
+  booking_id integer
+  type varchar(30) [not null, note: 'booking_status | rental_ending | overdue | waitlist_available | fine']
+  title varchar(150) [not null]
+  message text [not null]
+  is_read boolean [not null]
+  created_at timestamp [not null]
+}
+
+Table returns {
+  id integer [pk, increment]
+  booking_id integer [not null, unique]
+  accepted_by integer [not null]
+  returned_at timestamp [not null]
+  condition_on_return varchar(30) [not null, note: 'new | good | fair | poor']
+  has_damage boolean [not null]
+  damage_description text
+  notes text
+}
+
+Ref: audit_log.user_id > users.id
+Ref: equipment.category_id > categories.id
+Ref: equipment_photos.equipment_id > equipment.id
+Ref: equipment_units.equipment_id > equipment.id
+Ref: rental_terms.equipment_id - equipment.id
+Ref: waitlist_entries.user_id > users.id
+Ref: waitlist_entries.equipment_id > equipment.id
+Ref: bookings.user_id > users.id
+Ref: bookings.decided_by > users.id
+Ref: bookings.unit_id > equipment_units.id
+Ref: bookings.equipment_id > equipment.id
+Ref: booking_status_history.booking_id > bookings.id
+Ref: booking_status_history.changed_by > users.id
+Ref: fines.booking_id > bookings.id
+Ref: fines.user_id > users.id
+Ref: handovers.issued_by > users.id
+Ref: handovers.unit_id > equipment_units.id
+Ref: handovers.booking_id - bookings.id
+Ref: notifications.user_id > users.id
+Ref: notifications.booking_id > bookings.id
+Ref: returns.accepted_by > users.id
+Ref: returns.booking_id - bookings.id
