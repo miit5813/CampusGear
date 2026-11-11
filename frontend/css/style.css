@@ -1,5 +1,51 @@
 /* Собственные стили поверх Bootstrap */
 body {
   min-height: 100vh;
-  background-color: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f7fa;
+}
+
+main {
+  flex: 1;
+}
+
+.site-footer {
+  border-top: 1px solid #dee2e6;
+  background-color: #fff;
+}
+
+.equipment-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.equipment-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.12);
+}
+
+.equipment-card__image {
+  height: 180px;
+  object-fit: cover;
+}
+
+.equipment-card__description {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.equipment-photo {
+  width: 100%;
+  max-height: 380px;
+  object-fit: cover;
+  border-radius: 0.5rem;
+}
+
+@media (min-width: 992px) {
+  .booking-card {
+    position: sticky;
+    top: 1rem;
+  }
 }
