@@ -69,16 +69,5 @@ uvicorn app.main:app --reload
 ## Git-процесс
 
 - Ветки: `main` (стабильная), `develop`, `feature/<название>`
-- Коммиты по Conventional Commits: `feat:`, `fix:`, `docs:`, `style:`, `refactor:`, `chore:`
 - Слияние в `develop` через Pull Request
 
-## Прогресс
-
-См. [ROADMAP.md](ROADMAP.md).
-
-## Лицензия
-
-MIT
-=======
-Сервис по выдачи университетского оборудования
->>>>>>> 0b56307052bc38389560fc05d1dad54fb712352a
