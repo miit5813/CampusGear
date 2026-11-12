@@ -49,7 +49,7 @@ docker compose up -d --build
 
 # 3. Frontend (простой статический сервер)
 cd frontend
-python -m http.server 5173
+python3 -m http.server 5173
 ```
 
 - Сайт: http://localhost:5173
